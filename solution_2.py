@@ -1,48 +1,36 @@
 def max_div3_sum(numbers: list) -> int:
-    numbers.sort()
+    # numbers.sort()
     summa = sum(numbers)
-    remain1 = -1
-    remain2 = [0]   # 0, чтобы сумма посчиталась
+    remain = summa % 3
+    odd_elem_1 = None
+    odd_elem_2 = []
 
-    if summa % 3 == 0:
+
+    if remain == 0:
         return summa
     # если остаток 1, то ищем 2 числа с остатком 2
     # или 1 число с остатком 1, сравниваем
-    elif summa % 3 == 1:
-        for element in numbers:
-            if element % 3 == 1 and remain1 == -1:
-                remain1 = element
-            elif element % 3 == 2 and len(remain2) != 3:
-                remain2.append(element)
-            if remain1 != -1 and len(remain2) == 3:
-                if sum(remain2) > remain1:
-                    summa -= remain1
-                else:
-                    summa -= sum(remain2)
-                return summa
-        if remain1 != -1:
-            summa -= remain1
-        else:
-            summa -= sum(remain2)
-        return summa
     # если остаток 2, то ищем 2 числа с остатком 1 или
     # 1 число с остатком 2, сравниваем
     else:
         for element in numbers:
-            if element % 3 == 2 and remain1 == -1:
-                remain1 = element
-            elif element % 3 == 1 and len(remain2) != 3:
-                remain2.append(element)
-            if remain1 != -1 and len(remain2) == 3:
-                if sum(remain2) > remain1:
-                    summa -= remain1
-                else:
-                    summa -= sum(remain2)
-                return summa
-        if remain1 != -1:
-            summa -= remain1
+            # поиск числа
+            if element % 3 == remain and (odd_elem_1 is None or element < odd_elem_1):
+                odd_elem_1 = element
+
+            # поиск 2 чисел
+            elif element % 3 == (3 - remain):
+                odd_elem_2.append(element)
+                odd_elem_2.sort()
+                if len(odd_elem_2) > 2:
+                    odd_elem_2.pop()
+
+        if sum(odd_elem_2) != 0 and odd_elem_1 is not None:
+            summa -= min(odd_elem_1, sum(odd_elem_2))
+        elif odd_elem_1 is None:
+            summa -= sum(odd_elem_2)
         else:
-            summa -= sum(remain2)
+            summa -= odd_elem_1
         return summa
 
 
